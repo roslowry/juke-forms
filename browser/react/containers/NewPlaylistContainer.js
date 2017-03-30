@@ -7,8 +7,10 @@ export default class NewPlaylistContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      inputValue: ''
+      inputValue: '',
+      firstLoad: true
     }
+
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -16,16 +18,19 @@ export default class NewPlaylistContainer extends Component {
   handleChange (evt) {
     const value = evt.target.value;
     this.setState({
-      inputValue: value
+      inputValue: value,
+      firstLoad: false
     });
   }
 
   handleSubmit(event) {
     event.preventDefault();
     this.setState({
-      inputValue: ''
+      inputValue: '',
+      firstLoad: true
     })
-    console.log('input', this.state.inputValue)
+    axios.post('api/playlists/', {name: this.state.inputValue})
+    // console.log('input', this.state.inputValue)
   }
 
   render () {
@@ -38,6 +43,14 @@ export default class NewPlaylistContainer extends Component {
           handleSubmit={this.handleSubmit}
           inputValue={this.state.inputValue}
         />
+          {
+            inputValue.length > 16
+            ? <div className="alert alert-warning">ADD A NAME THAT IS LESS THAN 16 CHARACTERS!!!!!</div> : null
+          }
+           {
+            !inputValue && !this.state.firstLoad
+            ? <div className="alert alert-warning">Please actually write a name for your playlist</div> : null
+          }
       </div>
     )
   }
